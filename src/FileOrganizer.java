@@ -9,13 +9,14 @@ import java.nio.file.StandardCopyOption;
 public class FileOrganizer {
     private final static String sourceIndex = "/Users/test1/Desktop/Organizer";
     private final static String destinationIndex = "/Users/test1/Desktop/Organizer";
-    //private static final File log = new File( "log.txt");
+
 
     public static void main(String[] args) {
         FileOrganizer f = new FileOrganizer();
         f.createDirectories();
         f.fileOrganize();
     }
+
 
     void createDirectories() {
         String[] directories = {"PDFs", "Images", "Audios"};
@@ -34,15 +35,8 @@ public class FileOrganizer {
         if (files != null) {
             for (File file : files) {
                 switch (getExtension(file.getName())) {
-                    case ".txt", ".pdf", ".docx" -> {
-                        goToPdfs(file.getName());
-
-                    }
-
-                    case ".png", ".jpg", ".jpeg" -> {
-                        goToImages(file.getName());
-
-                    }
+                    case ".txt", ".pdf", ".docx" -> goToPdfs(file.getName());
+                    case ".png", ".jpg", ".jpeg" -> goToImages(file.getName());
                     case ".mp3", ".mp4", ".mpg" -> goToAudios(file.getName());
                 }
             }
@@ -61,28 +55,37 @@ public class FileOrganizer {
     void goToPdfs(String fileName) {
         try {
             Files.move(Path.of(sourceIndex + "/" + fileName), Path.of(destinationIndex + "/" + "PDFs" + "/" + fileName), StandardCopyOption.REPLACE_EXISTING);
-
+            BufferedWriter writer = new BufferedWriter(new FileWriter(sourceIndex + "/LOG.TXT", true));
+            writer.write(fileName + " ----->  Moved to PDFs \n");
+            writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
 
     void goToAudios(String fileName) {
         try {
             Files.move(Path.of(sourceIndex + "/" + fileName), Path.of(destinationIndex + "/" + "Audios" + "/" + fileName), StandardCopyOption.REPLACE_EXISTING);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(sourceIndex + "/LOG.TXT", true));
+            writer.write(fileName + " ----->  Moved to Audios \n");
+            writer.close();
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
 
     void goToImages(String fileName) {
         try {
             Files.move(Path.of(sourceIndex + "/" + fileName), Path.of(destinationIndex + "/" + "Images" + "/" + fileName), StandardCopyOption.REPLACE_EXISTING);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(sourceIndex + "/LOG.TXT", true));
+            writer.write(fileName + " ----->  Moved to Images \n");
+            writer.close();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-
-
 }
