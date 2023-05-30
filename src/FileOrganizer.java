@@ -35,9 +35,9 @@ public class FileOrganizer {
         if (files != null) {
             for (File file : files) {
                 switch (getExtension(file.getName())) {
-                    case ".txt", ".pdf", ".docx" -> goToPdfs(file.getName());
-                    case ".png", ".jpg", ".jpeg" -> goToImages(file.getName());
-                    case ".mp3", ".mp4", ".mpg" -> goToAudios(file.getName());
+                    case ".txt", ".pdf", ".docx" -> toDirectories(file.getName(), "PDFs");
+                    case ".png", ".jpg", ".jpeg" -> toDirectories(file.getName(), "Images");
+                    case ".mp3", ".mp4", ".mpg" -> toDirectories(file.getName(), "Audios");
                 }
             }
         }
@@ -52,34 +52,38 @@ public class FileOrganizer {
         return "";
     }
 
-    void goToPdfs(String fileName) {
-        try {
-            Files.move(Path.of(sourceIndex + "/" + fileName), Path.of(destinationIndex + "/" + "PDFs" + "/" + fileName), StandardCopyOption.REPLACE_EXISTING);
-            BufferedWriter writer = new BufferedWriter(new FileWriter(sourceIndex + "/LOG.TXT", true));
-            writer.write(fileName + " ----->  Moved to PDFs \n");
-            writer.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    void toDirectories(String fileName, String fileType) {
+        switch (fileType) {
+            case "PDFs" -> {
+                try {
+                    Files.move(Path.of(sourceIndex + "/" + fileName), Path.of(destinationIndex + "/PDFs/" + fileName), StandardCopyOption.REPLACE_EXISTING);
+                    logTo(fileName);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            case "Images" -> {
+                try {
+                    Files.move(Path.of(sourceIndex + "/" + fileName), Path.of(destinationIndex + "/Images/" + fileName), StandardCopyOption.REPLACE_EXISTING);
+                    logTo(fileName);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            case "Audios" -> {
+                try {
+                    Files.move(Path.of(sourceIndex + "/" + fileName), Path.of(destinationIndex + "/Audios/" + fileName), StandardCopyOption.REPLACE_EXISTING);
+                    logTo(fileName);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
         }
     }
 
-
-    void goToAudios(String fileName) {
+    void logTo(String fileName) {
         try {
-            Files.move(Path.of(sourceIndex + "/" + fileName), Path.of(destinationIndex + "/" + "Audios" + "/" + fileName), StandardCopyOption.REPLACE_EXISTING);
-            BufferedWriter writer = new BufferedWriter(new FileWriter(sourceIndex + "/LOG.TXT", true));
-            writer.write(fileName + " ----->  Moved to Audios \n");
-            writer.close();
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    void goToImages(String fileName) {
-        try {
-            Files.move(Path.of(sourceIndex + "/" + fileName), Path.of(destinationIndex + "/" + "Images" + "/" + fileName), StandardCopyOption.REPLACE_EXISTING);
             BufferedWriter writer = new BufferedWriter(new FileWriter(sourceIndex + "/LOG.TXT", true));
             writer.write(fileName + " ----->  Moved to Images \n");
             writer.close();
@@ -87,5 +91,6 @@ public class FileOrganizer {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 }
